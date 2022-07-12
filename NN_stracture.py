@@ -20,8 +20,8 @@ class SoundDataset(torch.utils.data.Dataset):
         xname, y = self.subset[index].values()
         X, _ = librosa.load(f"{self.rootdir}/{xname}.wav", sr=8000)
         if self.transform:
-            X = self.transform(X.astype('float16'))
-            y = self.transform(y)
+            X = torch.unsqueeze(self.transform(X.astype('float32')), 0)
+            y = torch.unsqueeze(self.transform(y.astype('float32')), 0)
         return xname, X, y
 
     def __len__(self):
@@ -33,45 +33,44 @@ class ToTensor(object):
 
 
 class ConvConvT1D(nn.Module):
-    def __init__(self, n_classes):
+    def __init__(self):
         super().__init__()
-        self.conv1 = nn.Sequential(
+        self.conv_layers = nn.Sequential(
             nn.Conv1d(in_channels=1, out_channels=64, kernel_size=101,
                       stride=20, padding=50),
             nn.Dropout(p=0.7),
             nn.LeakyReLU(negative_slope=0.2),
-            nn.BatchNorm1d(num_features=64)
-        )
-        self.conv2 = nn.Sequential(
+            nn.BatchNorm1d(num_features=64),
+
             nn.Conv1d(in_channels=64, out_channels=128, kernel_size=101,
                       stride=20, padding=50),
             nn.Dropout(p=0.7),
             nn.LeakyReLU(negative_slope=0.2),
-            nn.BatchNorm1d(num_features=128)
-        )
-        self.conv3 = nn.Sequential(
+            nn.BatchNorm1d(num_features=128),
+
             nn.Conv1d(in_channels=128, out_channels=256, kernel_size=101,
                       stride=20, padding=50),
             nn.Dropout(p=0.7),
             nn.LeakyReLU(negative_slope=0.2),
-            nn.BatchNorm1d(num_features=256)
+            nn.BatchNorm1d(num_features=256),
         )
-        self.convTranspose = nn.Sequential(
+
+        self.convT_layers = nn.Sequential(
             nn.ConvTranspose1d(in_channels=256,
                                out_channels=128,
                                kernel_size=101,
-                               stride=10,
+                               stride=20,
                                padding=50,
-                               output_padding=9),
+                               output_padding=19),
             nn.Dropout(p=0.7),
             nn.LeakyReLU(negative_slope=0.2),
             nn.BatchNorm1d(num_features=128),
             nn.ConvTranspose1d(in_channels=128,
                                out_channels=64,
                                kernel_size=101,
-                               stride=10,
+                               stride=20,
                                padding=50,
-                               output_padding=9),
+                               output_padding=19),
             nn.Dropout(p=0.7),
             nn.LeakyReLU(negative_slope=0.2),
             nn.BatchNorm1d(num_features=64),
@@ -85,7 +84,6 @@ class ConvConvT1D(nn.Module):
 
     def forward(self, x):
         return self.convT_layers(self.conv_layers(x))
-
 
 class ConvConvT2D(nn.Module):
     def __init__(self):
