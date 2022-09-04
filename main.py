@@ -96,19 +96,19 @@ def test(model, loss_tuple, dataloader, epoch, device, best_acc, model_name='mod
 
 
 if __name__ == '__main__':
-    path_data = '/Users/litvan007/NN_sound_data_base/data'
-    path_data_list = '/Users/litvan007/NN_sound_data_base/data_base.pickle'
+    path_data = '/Users/litvan007/NN_sound_data_base/data_2'
+    path_data_list = '/Users/litvan007/NN_sound_data_base/data_base_2.pickle'
 
     t = time.time()
     with open(path_data_list, 'rb') as fh:
         data_list = pickle.load(fh)
     logger.info(f"time of data init: {time.time() - t}")
 
-    end_idx_tv = 120000
+    end_idx_tv = 87000
     train_valid_subset = data_list[:end_idx_tv]
     test_subset = data_list[end_idx_tv:]
 
-    lengths = [int(len(train_valid_subset) * 0.77), int(len(train_valid_subset) * 0.23)]
+    lengths = [int(len(train_valid_subset) * 0.9), int(len(train_valid_subset) * 0.1)]
     train_subset, valid_subset = torch.utils.data.random_split(train_valid_subset, lengths)
 
     transform_baseline = transforms.Compose([ToTensor()])
