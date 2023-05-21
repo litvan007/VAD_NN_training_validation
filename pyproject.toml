@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "nn-noise-segmentation"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "nn_noise_segmentation"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+torchvision = "^0.14.1"
+
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.21.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
