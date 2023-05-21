@@ -40,7 +40,6 @@ class learn():
         self.process()
 
     def process(self):
-        # os.system("wandb login a4fc0db907801a21173615cb84708e1774b986a4")
         # wandb.init(project=self.model_name)
         # wandb.config = {
         #     "epochs": self.epochs,
